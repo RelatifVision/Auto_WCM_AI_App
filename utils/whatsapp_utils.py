@@ -318,19 +318,13 @@ def send_wpp(main_window):
     selected_chat = main_window.chat_list_send.currentItem()
     destinatario = selected_chat.text() if selected_chat else "Sin destinatario"
     
-    # Acceder directamente al QListWidget de adjuntos
-    attached_files_list_widget = main_window.attach_list 
-    attached_files = []
-    for i in range(attached_files_list_widget.count()):
-        item = attached_files_list_widget.item(i)
-        attached_files.append(item.text())
-    
-    
+    # Acceder directamente al QListWidget de adjuntos 
+    attached_files_list_widget= getattr(main_window, 'attached_files', [])       
+  
     message_text = f"El mensaje:\n\n{message}"
-    
-    
-    if attached_files:
-        files_str = "\n- " + "\n- ".join(attached_files)
+  
+    if attached_files_list_widget:
+        files_str = "\n- " + "\n- ".join([os.path.basename(f) for f in attached_files_list_widget])
         message_text += f"\n\nArchivos adjuntos:{files_str}"
     
     message_text += f"\n\nSerá enviado a '{destinatario}' por WhatsApp.\nAPIs de Meta no están disponibles."
@@ -352,7 +346,7 @@ def clear_whatsapp_message(chat_list, compose_area, attach_list):
     compose_area.clear()
     attach_list.clear()
 
-# Create_main_screen_widget
+# Create_main_screen_widget UI
 def create_main_screen_widget(main_window_instance):
     """
     Crea el widget principal de la pantalla de WhatsApp.
@@ -491,14 +485,15 @@ def create_send_section_widget(main_window_instance):
     buttons_layout.addWidget(btn_send)
 
     # Botón Adjuntar
-    attach_list = QListWidget() 
-    attach_list.setStyleSheet("""
-    QListWidget {background-color: #333; color: white; border: 1px solid #555;}
-    QListWidget::item {padding: 5px;}""")
-    attach_list.setMinimumHeight(10)
-    attach_list.setFixedHeight(40) 
-    main_window_instance.attach_list = attach_list 
-
+    if not hasattr(main_window_instance, "attach_list"):
+        attach_list = QListWidget() 
+        attach_list.setStyleSheet("""
+            QListWidget {background-color: #333; color: white; border: 1px solid #555;}
+            QListWidget::item {padding: 5px;}""")
+        attach_list.setMinimumHeight(10)
+        attach_list.setFixedHeight(40)
+        main_window_instance.attach_list = attach_list 
+    attach_list = main_window_instance.attach_list
     btn_attach = create_button(
         " Adjuntar",
         "adjuntar.png",
