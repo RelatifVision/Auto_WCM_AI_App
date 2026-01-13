@@ -1,21 +1,22 @@
 # calendar_api_settings\calendar_api.py
 import os
-import calendar
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
 from datetime import datetime, timedelta
-from config import SERVICE_ACCOUNT_FILE, CALENDAR_ID, TASK_OPTIONS, EXCEL_FILE_PATH
-from PyQt6.QtGui import QColor, QTextCharFormat
-from PyQt6.QtCore import QDate
+
+# Importaciones con manejo de errores
+try:
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
+    from googleapiclient.errors import HttpError
+except ImportError:
+    print("[ERROR] Bibliotecas de Google no instaladas. Ejecuta: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib")
+    raise
+
+from config import SERVICE_ACCOUNT_FILE, CALENDAR_ID
 from utils.common_functions import show_error_dialog
-from utils.excel_utils import load_dataframe
-from utils.company_utils import get_company_color, get_company_name, get_company_data
 
 # Verificar si el archivo existe antes de continuar
 if not os.path.exists(SERVICE_ACCOUNT_FILE):
-    raise Exception(f"El archivo de service account file no se encuentra en la ruta especificada: {SERVICE_ACCOUNT_FILE}")
+    raise Exception(f"El archivo de service account no se encuentra en: {SERVICE_ACCOUNT_FILE}")
 
 # Alcances requeridos para la API de Google Calendar
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -32,64 +33,64 @@ def get_credentials():
 
 # Crear un evento en el calendario usando la cuenta de servicio
 def create_event_api(params, calendar_window=None):
-    credentials = get_credentials()
-    # Construir el servicio de Google Calendar
-    service = build('calendar', 'v3', credentials=credentials)
+    try:
+        credentials = get_credentials()
+        service = build('calendar', 'v3', credentials=credentials)
 
-    evento = {
-        "summary": params["summary"],
-        "location": params.get("location", "Madrid"),
-        "description": params.get("description", "200€"),
-        "start": {
-            "dateTime": params["start"]["dateTime"],
-            "timeZone": params.get("timezone", "Europe/Madrid"),
-        },
-        "end": {
-            "dateTime": params["end"]["dateTime"],
-            "timeZone": params.get("timezone", "Europe/Madrid"),
-        },
-        "transparency": params.get("transparency", "opaque"),  # 'opaque' o 'transparent'
-        "extendedProperties": {
-            "private": {
-                "company": params.get("company", "VISUALMAX S.L."),
-                "task": params.get("task", "Técnico de video"),  # Asegúrate de incluir "task"
-                "color": params.get("color", "#ba3a3a")
+        evento = {
+            "summary": params["summary"],
+            "location": params.get("location", "Madrid"),
+            "description": params.get("description", ""),
+            "start": {
+                "dateTime": params["start"]["dateTime"],
+                "timeZone": params.get("timezone", "Europe/Madrid"),
+            },
+            "end": {
+                "dateTime": params["end"]["dateTime"],
+                "timeZone": params.get("timezone", "Europe/Madrid"),
+            },
+            "transparency": params.get("transparency", "opaque"),
+            "extendedProperties": {
+                "private": {
+                    "company": params.get("company", "VISUALMAX S.L."),
+                    "task": params.get("task", "Técnico de video"),
+                    "color": params.get("color", "#ba3a3a")
+                }
             }
         }
-    }
 
-    try:
-        # Llamar a la API para crear el evento en el calendario
         event = service.events().insert(calendarId=CALENDAR_ID, body=evento).execute()
-        print(f"Evento creado")
+        print(f"Evento creado: {event.get('htmlLink')}")
+        
     except Exception as e:
-        print(f"Error al crear el evento: {e}")
+        error_msg = f"Error al crear el evento: {str(e)}"
+        print(f"[ERROR] {error_msg}")
         if calendar_window:
-            show_error_dialog(calendar_window, "Error", f"Error al crear el evento: {str(e)}")
+            show_error_dialog(calendar_window, "Error de Calendario", error_msg)
         raise
     finally:
         if calendar_window:
+            from utils.calendar_utils import refresh_calendar
             refresh_calendar(calendar_window)
 
 def get_events():
-    credentials = get_credentials()
-    # Construir el servicio de Google Calendar
-    service = build('calendar', 'v3', credentials=credentials)
     try:
-        eventos = service.events().list(
+        credentials = get_credentials()
+        service = build('calendar', 'v3', credentials=credentials)
+        
+        now = datetime.utcnow().isoformat() + 'Z'
+        events_result = service.events().list(
             calendarId=CALENDAR_ID,
+            timeMin=now,
+            maxResults=250,
             singleEvents=True,
-            orderBy='startTime',
-            timeMin='2024-12-31T00:00:00Z',  # Filtrar eventos desde el 31 de diciembre de 2024
-            timeMax='2030-12-31T23:59:59Z',  # Filtrar eventos hasta el 31 de diciembre de 2030
-            fields='nextPageToken,items(id,summary,start,end,location,description,extendedProperties)'
+            orderBy='startTime'
         ).execute()
-        eventos_lista = eventos.get('items', [])
-        return eventos_lista
+        
+        return events_result.get('items', [])
     except Exception as e:
-        print(f"Error al obtener los eventos")
+        print(f"[ERROR] Error al obtener eventos: {str(e)}")
         return []
-
 def get_events_by_month(month_str):
     """
     Obtener eventos de un mes específico en formato 'YYYY-MM'.
