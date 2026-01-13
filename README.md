@@ -35,7 +35,7 @@ a) Google Cloud Console (Web)
 
 b) Ve a Gmail Settings (Web)
   1. Ve a Google Cloud Console
-  2. Habilita IMAP en la pestaña "Reenvío y correo POP/IMAP"
+  2. Habilita IMAP en la pestaña 'Recibidos' "Reenvío y correo POP/IMAP"
   3. Genera una Contraaseña de aplicación:
     · Ve a Google Account Security (Web)
     · Activa Verificación en dos pasos
@@ -59,4 +59,5 @@ Este repositorio no incluye modelos de spaCy debido a su tamaño. Sigue estas in
 - **Mediano (md):** `es_core_news_md`  
 - **Grande (lg):** `es_core_news_lg` (requiere más memoria)  
 # Auto_WCM_AI_App
+
 
