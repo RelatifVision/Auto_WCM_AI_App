@@ -74,23 +74,25 @@ def create_event_api(params, calendar_window=None):
             refresh_calendar(calendar_window)
 
 def get_events():
+    credentials = get_credentials()
+    # Construir el servicio de Google Calendar
+    service = build('calendar', 'v3', credentials=credentials)
     try:
-        credentials = get_credentials()
-        service = build('calendar', 'v3', credentials=credentials)
-        
-        now = datetime.utcnow().isoformat() + 'Z'
-        events_result = service.events().list(
+        # Obtener eventos desde el 1 de enero de 2024 hasta el 31 de diciembre de 2030
+        eventos = service.events().list(
             calendarId=CALENDAR_ID,
-            timeMin=now,
-            maxResults=250,
             singleEvents=True,
-            orderBy='startTime'
+            orderBy='startTime',
+            timeMin='2024-01-01T00:00:00Z',  # Desde el 1 de enero de 2024
+            timeMax='2030-12-31T23:59:59Z',  # Hasta el 31 de diciembre de 2030
+            fields='nextPageToken,items(id,summary,start,end,location,description,extendedProperties)'
         ).execute()
-        
-        return events_result.get('items', [])
+        eventos_lista = eventos.get('items', [])
+        return eventos_lista
     except Exception as e:
-        print(f"[ERROR] Error al obtener eventos: {str(e)}")
+        print(f"Error al obtener los eventos: {str(e)}")
         return []
+    
 def get_events_by_month(month_str):
     """
     Obtener eventos de un mes específico en formato 'YYYY-MM'.
