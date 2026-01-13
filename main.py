@@ -23,12 +23,12 @@ def check_internet_connection():
                 result = sock.connect_ex((host, port))
                 sock.close()
                 if result == 0:
-                    print(f"[INFO] Conexión exitosa a {host}:{port}")
+                    print(f"[INFO] Conexión exitosa a internet")
                     return True
             except Exception:
                 continue
                 
-        print("[WARNING] No se pudo establecer conexión a ningún servidor de prueba")
+        print("[INFO] No se pudo establecer conexión a ningún servidor de prueba")
         return False
         
     except Exception as e:
@@ -36,26 +36,19 @@ def check_internet_connection():
         return False
 
 def main():
-    print("Iniciando la aplicación...")  # Depuración
-
+    print("Iniciando la aplicación...")  
     app = QApplication(sys.argv)
-    
     # Verificar conexión antes de crear la ventana principal
     has_internet = check_internet_connection()
-    
     # Crear la ventana principal pasando el estado de conexión
     window = MainWindow(has_internet=has_internet)
-    
     # Mostrar mensaje de advertencia solo si no hay conexión
     if not has_internet:
         from utils.common_functions import show_warning_dialog
         show_warning_dialog(window, "Conexión Limitada", "No hay conexión a Internet. Algunas funciones estarán limitadas.")
     
     window.show()  # Mostrar la ventana
-    print("Ventana principal mostrada.")  # Depuración
-
-    sys.exit(app.exec())  # Ejecutar la aplicación
-
+    sys.exit(app.exec())  
 
 if __name__ == "__main__":
     main()

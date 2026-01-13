@@ -25,7 +25,6 @@ def normalize_company_name(company_name):
 
 def repair_company_names_in_calendar():
     """Repara los nombres de empresa en todos los eventos del calendario."""
-    print("🔄 Iniciando reparación de nombres de empresas...")
     events = get_events()
     count_repaired = 0
 
@@ -36,7 +35,6 @@ def repair_company_names_in_calendar():
 
         corrected_company = normalize_company_name(original_company)
         if corrected_company != original_company:
-            print(f"🔧 Corrigiendo: '{original_company}' → '{corrected_company}'")
 
             # Obtener datos actuales del evento
             summary = event.get('summary', '')
