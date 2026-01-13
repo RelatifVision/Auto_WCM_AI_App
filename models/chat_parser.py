@@ -215,7 +215,6 @@ def infer_date(text):
             - hora es un objeto datetime.time.
     """
     today = dttime.now().date() # Asumiendo dttime es datetime.datetime
-    print(f"[DEBUG] Intentando inferir fecha de: '{text}'") # Para depuración
 
     # 1. Intentar parseo general con dateparser para obtener fecha y hora
     try:
@@ -238,12 +237,10 @@ def infer_date(text):
     if match:
         day_str = match.group(1)
         month_str = match.group(2)
-        print(f"[DEBUG] Encontrado patrón 'dia de mes': dia={day_str}, mes={month_str}")
         try:
             # Intentar parsear solo "12 agosto"
             parsed_d = dateparser.parse(f"{day_str} {month_str}", languages=['es'], settings={'DATE_ORDER': 'DMY'})
             if parsed_d:
-                print(f"[DEBUG] dateparser del patrón específico encontró: {parsed_d}")
                  # Asegurar devolución de (date, time)
                 if isinstance(parsed_d, dttime):
                     return parsed_d.date(), parsed_d.time()
@@ -269,12 +266,10 @@ def infer_date(text):
 
     # 4. Fallback: Si no se encuentra nada específico, usar dateparser una última vez
     # y si eso falla, usar hoy.
-    print("[DEBUG] Usando fallback final.")
     try:
         # Intentar dateparser una vez más sin restricciones
         parsed_final = dateparser.parse(text, languages=['es'])
         if parsed_final:
-             print(f"[DEBUG] Fallback dateparser encontró: {parsed_final}")
              if isinstance(parsed_final, dttime):
                 return parsed_final.date(), parsed_final.time()
              elif isinstance(parsed_final, date):
@@ -283,7 +278,6 @@ def infer_date(text):
         print(f"[WARNING] Error en fallback dateparser: {e}")
 
     # 5. Último Fallback: Hoy a las 09:00
-    print("[DEBUG] Fallback a fecha actual.")
     return today, time(9, 0)         
              
 def handle_chat_message(message, calendar_window):
