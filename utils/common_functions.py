@@ -270,7 +270,6 @@ def close_application(window_instance):
         "¿Está seguro que desea apagar la aplicación?"
     )
     if reply:  # Si el usuario hizo clic en OK/Aceptar
-        # Opcional: Guardar datos si la ventana tiene un método para ello
         if hasattr(window_instance, 'save_data'):
             try:
                 window_instance.save_data()

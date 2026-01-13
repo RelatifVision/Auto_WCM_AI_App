@@ -54,10 +54,8 @@ class BusinessManager:
                     start_dt = datetime.fromisoformat(start_date_str.replace('Z', '+00:00'))
                     end_dt = datetime.fromisoformat(end_date_str.replace('Z', '+00:00'))
                     duration = (end_dt - start_dt).total_seconds() / 3600
-                    print(f"[DEBUG] Evento con hora: {event.get('summary', 'Sin título')} -> {duration:.2f} horas")
                     # Si la duración calculada es <= 0, usar 8 horas como valor por defecto
                     if duration <= 0:
-                        print(f"[INFO] Duración calculada <= 0 para evento con hora: {event.get('summary', 'Sin título')}. Usando 8.0 horas como valor por defecto.")
                         duration = 8.0
 
                 else:
@@ -67,7 +65,6 @@ class BusinessManager:
                     end_date = datetime.fromisoformat(end_date_str).date()
                     num_days = (end_date - start_date).days + 1 # +1 para incluir ambos días
                     duration = num_days * 24.0
-                    print(f"[DEBUG] Evento de todo el día, {num_days} días, calculado como: {duration:.2f} horas")
 
                 # Acumular horas
                 hours_data[company] = hours_data.get(company, 0) + duration
@@ -167,15 +164,9 @@ class BusinessManager:
                     print(f"Advertencia: Evento '{event.get('summary', 'Sin título')}' no tiene descripción.")
                     continue
 
-                # Extraer el importe de la descripción usando regex
-                # Busca un patrón como "220€" o "220 €" o "300,50€"
-                # El patrón (\d+(?:,\d{2})?) captura números enteros y decimales con coma (ej. 220, 300,50)
-                # Seguido opcionalmente de un espacio \s*
-                # Y luego el símbolo €
                 import re # Asegúrate de tener 'import re' al inicio del archivo
                 match = re.search(r'(\d+(?:,\d{2})?)\s*€', description)
                 if not match:
-                    print(f"Advertencia: No se encontró importe en la descripción del evento '{event.get('summary', 'Sin título')}': '{description}'")
                     continue
 
                 # Obtener el valor como string y convertirlo a float
@@ -191,7 +182,6 @@ class BusinessManager:
                 # Acumular el importe para la empresa (usando el nombre de la empresa del título, ya normalizado)
                 normalized_company = normalize_company_name(company)
                 importe_data[normalized_company] = importe_data.get(normalized_company, 0) + importe_valor
-                print(f"[DEBUG] Evento '{event.get('summary', 'Sin título')}', Empresa '{normalized_company}', Importe extraído: {importe_valor:.2f} €")
 
             except Exception as e:
                 print(f"Error al calcular importe para {company}: {e}")

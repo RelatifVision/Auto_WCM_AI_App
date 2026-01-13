@@ -274,11 +274,6 @@ def delete_event(calendar_window):
             refresh_calendar(calendar_window)
             # Mostrar mensaje de éxito
             show_success_dialog(calendar_window, "Éxito", "Evento eliminado exitosamente.")
-            # Opcional: Limpiar formato de la fecha en el calendario si es necesario
-            # format = QTextCharFormat()
-            # datetime_str = event['start']['dateTime']
-            # date_obj = QDate.fromString(datetime_str[:10], "yyyy-MM-dd")
-            # calendar_window.calendar.setDateTextFormat(date_obj, format)
 
         except Exception as e:
             error_msg = f"Error al borrar el evento: {str(e)}"

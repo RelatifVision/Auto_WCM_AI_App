@@ -42,11 +42,8 @@ def send_email(subject, recipient, body):
     # 2. Enviar el correo usando SMTP
     try:
         # Asegurarse de usar las variables importadas
-        print(f"[DEBUG] Intentando conectar a SMTP: {SMTP_SERVER}:{SMTP_PORT}")
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-            print(f"[DEBUG] Intentando login con EMAIL_ADDRESS: {EMAIL_ADDRESS}")
             server.login(EMAIL_ADDRESS, APP_PASSWORD)
-            print(f"[DEBUG] Enviando correo a: {recipient}")
             server.sendmail(EMAIL_ADDRESS, recipient, message.as_string())
         print("[INFO] Correo enviado exitosamente.")
         return True, "Correo enviado exitosamente"
@@ -173,7 +170,6 @@ def _get_google_credentials():
     if os.path.exists(token_path):
         try:
             creds = Credentials.from_authorized_user_file(token_path, SCOPES)
-            print(f"[DEBUG] Credenciales cargadas desde {token_path}")
         except Exception as e:
             print(f"[WARNING] Error al cargar credenciales desde token: {e}")
             # Si hay un error al cargar el token, lo eliminamos para forzar una nueva autenticación

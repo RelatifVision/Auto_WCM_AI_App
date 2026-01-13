@@ -43,7 +43,6 @@ def show_company_stats(parent_window=None, year="Todos"):
         parent_window: La ventana padre (puede ser cualquier QMainWindow o None).
         year: El año para filtrar los eventos (por defecto "Todos").
     """
-    print(f"Mostrando estadísticas de horas/días por empresa y tarea para el año {year}")
     try:
         # 1. Obtener eventos
         events = get_events()
@@ -68,24 +67,15 @@ def show_company_stats(parent_window=None, year="Todos"):
 
         # 3. Calcular estadísticas
         hours_per_company = manager.calculate_hours_per_company()
-        print("Horas por empresa (antes de agrupar):", hours_per_company)
         import_per_company = manager.calculate_import_per_company()
-        print("Importe por empresa (antes de agrupar):", import_per_company)
         days_per_company = manager.calculate_days_per_company()
-        print("Días por empresa (antes de agrupar):", days_per_company)
         tasks_per_company = manager.calculate_tasks_per_company()
-        print("Tareas por empresa (antes de agrupar):", tasks_per_company)
 
         # 4. Agrupar empresas similares en cada métrica usando el mapeo manual
         hours_per_company_merged = merge_company_stats(hours_per_company)
         import_per_company_merged = merge_company_stats(import_per_company)
         days_per_company_merged = merge_company_stats(days_per_company)
         tasks_per_company_merged = merge_company_stats(tasks_per_company)
-
-        print("Horas por empresa (después de agrupar):", hours_per_company_merged)
-        print("Importe por empresa (después de agrupar):", import_per_company_merged)
-        print("Días por empresa (después de agrupar):", days_per_company_merged)
-        print("Tareas por empresa (después de agrupar):", tasks_per_company_merged)
 
         # 5. Preparar datos finales para la ventana de estadísticas
         stats_data = {
@@ -95,14 +85,6 @@ def show_company_stats(parent_window=None, year="Todos"):
             "tasks_per_company": tasks_per_company_merged
         }
 
-        # print antes de crear stats_window
-        print("\n--- Datos enviados a StatsWindow (después de agrupar) ---")
-        print("Horas por empresa:", hours_per_company_merged)
-        print("Días por empresa:", days_per_company_merged)
-        print("Importe por empresa:", import_per_company_merged)
-        print("Tareas por empresa:", tasks_per_company_merged)
-        print("--- Fin datos ---\n")
-
         # 6. Crear y mostrar ventana de estadísticas
         if not hasattr(parent_window, 'stats_window') or parent_window.stats_window is None:
             parent_window.stats_window = StatsWindow(stats_data, parent=parent_window, year=year)
@@ -110,7 +92,6 @@ def show_company_stats(parent_window=None, year="Todos"):
             # Si ya existe, actualizar los datos y el título
             parent_window.stats_window.update_stats_data(stats_data, year)
         parent_window.stats_window.show()
-        print("[INFO] Ventana de estadísticas mostrada.")
 
     except Exception as e:
         error_msg = f"Error al calcular estadísticas: {str(e)}"

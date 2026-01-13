@@ -12,6 +12,7 @@ from models.chat_parser import (
 )
 from utils.common_functions import show_info_dialog, show_error_dialog
 from utils.event_handler import confirm_event, reject_event
+from utils.file_utils import select_files, clear_whatsapp_message
 
 def load_and_display_data(main_window):
     """
@@ -560,7 +561,6 @@ def create_action_buttons_layout(main_window_instance):
     button_layout.addLayout(confirm_reject_layout)
     return button_layout
 
-# Cambiar el nombre de la función
 def handle_chat_action_logic(main_window_instance, url): 
     """
     Procesa las acciones de los enlaces 'Confirmar'/'Rechazar' en el chat.
@@ -568,7 +568,6 @@ def handle_chat_action_logic(main_window_instance, url):
     try: # <-- Inicio del try
         # 1. Obtener la URL como string
         url_str = url.toString().strip()
-        print(f"[DEBUG] URL recibida en handle_chat_action: '{url_str}'")
 
         # 2. Validaciones básicas de la URL
         if not url_str:
@@ -582,7 +581,6 @@ def handle_chat_action_logic(main_window_instance, url):
             raise ValueError(f"Formato de URL inválido: '{url_str}'")
 
         action, date_str = parts
-        print(f"[DEBUG] Acción: '{action}', Fecha_str: '{date_str}'")
 
         # 4. Validar que 'action' sea conocida
         if action not in ['confirm', 'reject']:

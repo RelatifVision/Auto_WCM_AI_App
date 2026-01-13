@@ -41,7 +41,6 @@ def confirm_event(calendar_window, date, time):
                 
                 # Comparar solo la fecha (día/mes/año)
                 if requested_date == event_date:
-                    print(f"[DEBUG] ¡CONFLICTO DETECTADO! Ya existe un evento en la fecha {requested_date}")
                     show_conflict_dialog(event, requested_date, time)
                     return False  
 
