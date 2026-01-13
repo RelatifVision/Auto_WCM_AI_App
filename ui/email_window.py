@@ -147,11 +147,11 @@ class EmailWindow(QMainWindow):
             "papelera.png",
             lambda: self.clear_current_message() # Método para limpiar todo
         ))
-        action_buttons_layout.addWidget(create_button(
-            " Guardar",
-            "draft.png",
-            self.save_email
-        ))
+        # action_buttons_layout.addWidget(create_button(
+        #     " Guardar",
+        #     "draft.png",
+        #     self.save_email
+        # ))
 
         compose_layout.addLayout(left_layout)
         compose_layout.addLayout(action_buttons_layout)
