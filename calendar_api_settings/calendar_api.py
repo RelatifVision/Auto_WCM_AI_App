@@ -61,7 +61,7 @@ def create_event_api(params, calendar_window=None):
     try:
         # Llamar a la API para crear el evento en el calendario
         event = service.events().insert(calendarId=CALENDAR_ID, body=evento).execute()
-        print(f"Evento creado: {event['summary']}")
+        print(f"Evento creado")
     except Exception as e:
         print(f"Error al crear el evento: {e}")
         if calendar_window:
@@ -87,7 +87,7 @@ def get_events():
         eventos_lista = eventos.get('items', [])
         return eventos_lista
     except Exception as e:
-        print(f"Error al obtener los eventos: {e}")
+        print(f"Error al obtener los eventos")
         return []
 
 def get_events_by_month(month_str):
@@ -173,7 +173,6 @@ def delete_event_api(event_id, calendar_window=None):
     try:
         # Eliminar el evento utilizando su ID y el ID del calendario proporcionado
         service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
-        print(f"El evento con ID {event_id} ha sido eliminado correctamente del calendario {CALENDAR_ID}.")
     except Exception as e:
         print(f"Error al eliminar el evento: {e}")
         if calendar_window:
@@ -211,8 +210,7 @@ def edit_event_api(event_id, nuevos_datos, calendar_window=None):
             eventId=event_id,
             body=evento
         ).execute()
-        print(f"El evento con ID {event_id} ha sido actualizado correctamente.")
-        print(f"Nuevo actualización: {evento_actualizado['summary']}")
+
     except HttpError as error:
         print(f"Error al modificar el evento: {error}")
         if calendar_window:
