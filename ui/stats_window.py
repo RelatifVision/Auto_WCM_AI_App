@@ -29,7 +29,6 @@ class StatsWindow(QMainWindow):
             parent (QMainWindow, optional): Ventana padre de la ventana actual. Defaults to None.
             year (str, optional): Año para filtrar los datos. Defaults to "Todos".
         """
-        # print(f"[DEBUG] Iniciando StatsWindow con stats_ {stats_data}") # Descomentar para ver qué recibe
 
         self.stats_data = stats_data
         self.main_window = parent
@@ -136,7 +135,6 @@ class StatsWindow(QMainWindow):
 
         companies_to_show = sorted(list(all_companies_calculated))
 
-        # print(f"[DEBUG] Companies to show: {companies_to_show}") # Descomentar para ver claves únicas
 
         stats_table.setRowCount(len(companies_to_show))
 
@@ -256,7 +254,6 @@ class StatsWindow(QMainWindow):
         Actualiza el resumen según el año seleccionado.
         Recalcula las estadísticas filtrando por el año seleccionado.
         """
-        print(f"[DEBUG] Año seleccionado en combo: {year_text}")
         # Actualizar el atributo de la clase con el nuevo año
         self.selected_year = year_text
         # Llamar al método que recarga los datos y actualiza la UI, usando el nuevo año
@@ -267,19 +264,15 @@ class StatsWindow(QMainWindow):
         Recarga los datos de estadísticas y actualiza la interfaz.
         Si se proporciona un año, lo usa para filtrar. Sino, usa self.selected_year.
         """
-        print(f"[DEBUG] Botón 'Refresh' de estadísticas presionado o año cambiado. Año: {year or self.selected_year}")
 
         # OPCIÓN 2: Duplicar lógica aquí para actualizar *esta* instancia
-        # print("[DEBUG] Duplicando lógica de stats_utils para actualizar esta instancia directamente.")
         try:
             # Usar el año proporcionado como parámetro, o el de la instancia si no se proporciona
             year_to_use = year if year is not None else self.selected_year
-            print(f"[DEBUG] Recalculando stats para el año: {year_to_use}")
 
             # 1. Obtener eventos
             events = get_events()
             if not events:
-                print("[INFO] No se encontraron eventos para refrescar estadísticas.")
                 # Opcional: Mostrar un mensaje si no hay eventos
                 # show_info_dialog(self, "Estadísticas", "No se encontraron eventos.")
                 return # No hay nada que actualizar
@@ -307,15 +300,11 @@ class StatsWindow(QMainWindow):
             manager = BusinessManager()
             manager.load_events(events)
 
-            # 3. Calcular estadísticas (como en show_company_stats)
+            # 3. Calcular estadísticas 
             hours_per_company = manager.calculate_hours_per_company()
-            print("Horas por empresa (después de refrescar):", hours_per_company)
             import_per_company = manager.calculate_import_per_company()
-            print("Importe por empresa (después de refrescar):", import_per_company)
             days_per_company = manager.calculate_days_per_company()
-            print("Días por empresa (después de refrescar):", days_per_company)
             tasks_per_company = manager.calculate_tasks_per_company() # Asumiendo que ya devuelve string
-            print("Tareas por empresa (después de refrescar):", tasks_per_company)
             from utils.stats_utils import merge_company_stats
 
             # 4. Agrupar empresas similares en cada métrica (como en show_company_stats)
@@ -324,10 +313,6 @@ class StatsWindow(QMainWindow):
             days_per_company_grouped = merge_company_stats(days_per_company)
             tasks_per_company_grouped = merge_company_stats(tasks_per_company) # Asumiendo que merge_company_stats maneja strings correctamente
 
-            print("Horas por empresa (después de agrupar):", hours_per_company_grouped)
-            print("Importe por empresa (después de agrupar):", import_per_company_grouped)
-            print("Días por empresa (después de agrupar):", days_per_company_grouped)
-            print("Tareas por empresa (después de agrupar):", tasks_per_company_grouped)
 
             # 5. Actualizar el atributo stats_data de esta instancia
             self.stats_data = {
@@ -347,7 +332,6 @@ class StatsWindow(QMainWindow):
         """
         Actualiza la interfaz de usuario con los datos actuales de self.stats_data.
         """
-        print("[DEBUG] Actualizando UI de StatsWindow...")
         # Limpiar la tabla
         self.stats_table.clearContents()
         # Obtener empresas para mostrar
@@ -399,7 +383,6 @@ class StatsWindow(QMainWindow):
 
         # Actualizar el área de resumen
         self.summary_area.setHtml(self.generate_summary_text())
-        print("[DEBUG] UI de StatsWindow actualizada.")
 
     def update_stats_data(self, new_stats_data, year="Todos"):
         """

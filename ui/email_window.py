@@ -31,7 +31,7 @@ from utils.dialog_utils import load_company_options
 from utils.excel_utils import load_dataframe
 from utils.gui_utils import create_button, create_navbar
 from utils.file_utils import select_files
-from utils.mail_utils import clear_mail_message, load_inbox, load_drafts, get_mail_connection
+from utils.mail_utills import clear_mail_message, load_inbox, load_drafts, get_mail_connection
 from config import EMAIL_ADDRESS, APP_PASSWORD, SMTP_SERVER, SMTP_PORT, IMAP_SERVER
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.compose', 'https://www.googleapis.com/auth/gmail.readonly']
@@ -324,8 +324,7 @@ class EmailWindow(QMainWindow):
         message['To'] = destination
         message.attach(MIMEText(message_text, "plain"))
 
-        # --- 4. Adjuntar archivos (leer desde self.attached_files) ---
-        print(f"[DEBUG] Archivos a adjuntar al borrador: {self.attached_files}") # Para depuración
+        # --- 4. Adjuntar archivos 
         for file_path in self.attached_files:
             if os.path.isfile(file_path): # Verificar que el archivo exista
                 try:
@@ -357,8 +356,6 @@ class EmailWindow(QMainWindow):
 
         # --- 5. Convertir el mensaje MIME a formato raw para la API de Gmail ---
         raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-        print("[DEBUG] Mensaje MIME convertido a raw para el borrador.") # Para depuración
-        # ------------------------------------------------------------------------
 
         # --- 6. Autenticación y Autorización con la API de Gmail ---
         creds = None
@@ -408,7 +405,6 @@ class EmailWindow(QMainWindow):
         try:
             # Construir el servicio de Gmail
             service = build('gmail', 'v1', credentials=creds)
-            print("[DEBUG] Servicio de Gmail construido.")
 
             # Crear el cuerpo de la solicitud para el borrador
             create_draft_request_body = {
@@ -422,7 +418,6 @@ class EmailWindow(QMainWindow):
             draft = service.users().drafts().create(userId='me', body=create_draft_request_body).execute()
 
             success_msg = f"Borrador guardado con ID: {draft['id']}"
-            print(f"[INFO] {success_msg}")
             show_info_dialog(self, "Éxito", "Correo guardado en borradores correctamente.")
             # Limpiar campos después de guardar
             self.clear_current_message()
@@ -451,7 +446,6 @@ class EmailWindow(QMainWindow):
         # Limpiar también la lista interna de rutas de archivos
         self.attached_files.clear()
         self.sendfactura=False   
-        print("[DEBUG] Formulario de correo limpiado.")
 
     def return_mail(self, mail_ids):
         messages = []

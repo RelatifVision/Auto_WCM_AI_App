@@ -75,7 +75,6 @@ class MainWindow(QMainWindow):
         """
         Abrir ventana de estadísticas desde el navbar.
         """
-        print("[DEBUG] Botón 'Estadísticas' presionado.")
         # Llamar a la función utilitaria, pasándose a sí mismo (self)
         from utils.stats_utils import show_company_stats
         show_company_stats(self)

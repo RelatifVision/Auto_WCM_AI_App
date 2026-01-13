@@ -408,23 +408,6 @@ class AutoTextWindow(QMainWindow):
         if hasattr(self.parent_window, 'sendfactura'):
             self.parent_window.sendfactura = True
         
-        # 7. Extraer datos del cliente de la factura
-                # cliente_match = re.search(r'(?:Cliente|Socio)[:\s]*([^\n]+)', invoice_text, re.IGNORECASE)
-                # if cliente_match:
-                #     cliente_factura = cliente_match.group(1).strip()
-                #     print(f"[INFO] Cliente en factura: {cliente_factura}")
-                    
-                #     # Verificar si cliente está en mensaje
-                #     if cliente_factura.lower() in message_text.lower():
-                #         print(f"[INFO] ✅ Cliente coincide")
-                #     else:
-                #         print(f"[INFO] ❌ Cliente no coincide")
-                #         warnings.append(f"Cliente '{cliente_factura}' no encontrado en el mensaje")
-                # else:
-                #     print(f"[WARNING] No se encontró cliente en la factura")
-                #     warnings.append("No se encontró cliente en la factura") 
-
-
     # Extract
     def _extract_amount_from_invoice_text(self, invoice_text):
         """
